@@ -8,10 +8,10 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-This current version does not have the configurator ready yet.  So you will need GCC and make.
+This current version does not have the configurator ready yet.  So you will need GCC, make, and CMake.
 
 ```
-GCC & make
+GCC, make, and CMake
 ```
 
 ### Installing
@@ -31,9 +31,9 @@ type 'make'
 ```
 Output should be created as an executable "mir.exe"
 Issue "./mir" to invoke the program
-
-Append this execution to the end of a build sequence and have the program in appender mode to have it in your development chain.
 ```
+Append this execution to the end of a build sequence and have the program in appender mode to have it in your development chain.
+
 
 To verify it installed correctly, go into mirConfig.mir and change the address field to the correct appendage address desired. and run the executable.
 
@@ -125,7 +125,7 @@ For the versions available, see the [tags on this repository](https://github.com
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ZygalM1S1U/Mir/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ZygalM1S1U/Mir_Appender/blob/master/LICENSE) file for details
 
 ## Acknowledgments
 
