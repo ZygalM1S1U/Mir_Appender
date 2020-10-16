@@ -88,6 +88,7 @@ void uiMode(void)
     printf("Welcome to Mir, the Intel hex parser and CRC appender");
     printTime();
     printf("Revision: %d.%d.%d.%d\n", MIR_MAJOR, MIR_MINOR, MIR_BUILD, MIR_DEV);
+    printArt();
 
     // charge up the loading screen
     bool loadingResult = loadingScreen();
