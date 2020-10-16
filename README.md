@@ -1,6 +1,6 @@
 # Mir
 This is an intel hex parser and CRC appender.  The program will go through an intel hex file and calculate a crc for it.
-Readme is currently for tagged version 1.3.5.30!
+Readme is currently for tagged version 2.3.5.35!
 
 ## Getting Started
 
@@ -29,20 +29,35 @@ type 'make'
 ```
 
 ```
-output should be created as an executable "a.exe"
+Output should be created as an executable "mir.exe"
+Issue "./mir" to invoke the program
+
+Append this execution to the end of a build sequence and have the program in appender mode to have it in your development chain.
 ```
 
 To verify it installed correctly, go into mirConfig.mir and change the address field to the correct appendage address desired. and run the executable.
 
 Output should read 
 ```
-Appendage address found
-End of file
-File copied successfully.
+File Size: 0xAAAA  File CRC: 0xAAAA
+Total execution time: x.xxxxxx ms
+File Copied Successfully
 ```
 ## Configuration File
 
 Inside the configuration file, there are 4 possible records in the current release, there will be more added and it is expected there should be more added as well.
+
+Example of config file
+```
+UI:00;
+CRC:02;
+Byte:00;
+Append:0807FFF8;
+FileLoc:;
+FileName:app.hex;
+OpName:appCRC.hex;
+OpLoc:;
+```
 
 1st record - The Enum number for the operating mode, currently, here they are from config.h
 ```
@@ -73,20 +88,28 @@ Example
 -> read by program as 0x0803FF87
 ```
 
-Example of config file
+With all directory information, no input
+Example
 ```
-UI:01;
-CRC:02;
-Byte:00;
-Append:0803FF87;
+FileLoc:;
 ```
+Means that this record will append it to the current directory.
+
+5th record - The file directory to run the tool on.
+
+6th record - The filename to calculate the CRC on.
+
+7th record - The name of the output and CRC & Length appended file modified from the original file.
+
+8th record - The output file location directory
 
 ## Debug Information
 To assist with debugging information, there is a DEBUG_ACTIVE precomplied flag inside of ```main.h```, please switch it to true if you desire to see all debugging information as "printf".
 
 ## Built With
 
-* [GCC Make](https://gcc.gnu.org/onlinedocs/gccint/Makefile.html) - build tool
+* [GCC Make](https://gcc.gnu.org/onlinedocs/gccint/Makefile.html) - Build tool
+* [CMake](https://cmake.org/) - Build tool
 
 ## Contributing
 
@@ -94,7 +117,7 @@ Currently a WIP, but make pull requests and I will approve ones I see as okay.
 
 ## Versioning
 
-For the versions available, see the [tags on this repository](https://github.com/ZygalM1S1U/Mir/releases). 
+For the versions available, see the [tags on this repository](https://github.com/ZygalM1S1U/Mir_Appender/releases).
 
 ## Authors
 
