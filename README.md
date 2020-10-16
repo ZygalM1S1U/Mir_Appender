@@ -9,10 +9,15 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 This current version does not have the configurator ready yet.  So you will need GCC, make, and CMake.
+You can use Visual Studio in Windows and CMake directly on Linux, or Mac.
 
 ```
 GCC, make, and CMake
 ```
+
+### OS Compatibility
+
+If you can build it on the OS, it should work!
 
 ### Installing
 
@@ -43,6 +48,20 @@ File Size: 0xAAAA  File CRC: 0xAAAA
 Total execution time: x.xxxxxx ms
 File Copied Successfully
 ```
+
+In order to install the GUI configurator, use CMake and set the source code directory to:
+```
+/Mir/intelHexParser/mirConfigurator
+```
+
+and the build binaries to:
+```
+/Mir/intelHexParser/mirConfigurator/build
+```
+
+Click on Configure and wait for this to complete.  Once it has completed, click Generate.
+Once this has finished, you may open the project to build.  Build it and you are good to go!
+
 ## Configuration File
 
 Inside the configuration file, there are 4 possible records in the current release, there will be more added and it is expected there should be more added as well.
@@ -89,6 +108,7 @@ Example
 ```
 
 With all directory information, no input means that this record will append it to the current directory.
+
 Example
 ```
 FileLoc:;
