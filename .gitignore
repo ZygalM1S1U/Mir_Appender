@@ -1,0 +1,14 @@
+#ingore this directory completely
+intelHexParser/mirConfigurator/build
+
+# Ignore these file types
+*.o
+*.hex
+*.exe
+*.creator
+*.creator.user
+*.files
+*.config
+*.includes
+*.layout
+*.cscope_file_list
