@@ -12,3 +12,5 @@ intelHexParser/mirConfigurator/build
 *.includes
 *.layout
 *.cscope_file_list
+*.cbp
+*.depend
