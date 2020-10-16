@@ -88,13 +88,11 @@ Example
 -> read by program as 0x0803FF87
 ```
 
-With all directory information, no input
+With all directory information, no input means that this record will append it to the current directory.
 Example
 ```
 FileLoc:;
 ```
-Means that this record will append it to the current directory.
-
 5th record - The file directory to run the tool on.
 
 6th record - The filename to calculate the CRC on.
