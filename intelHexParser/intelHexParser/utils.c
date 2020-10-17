@@ -23,6 +23,7 @@ bool memCheck(void)
         if(temp != NULL)
         {
             sack = temp;
+            free(sack);
         }
         else
         {
