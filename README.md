@@ -2,6 +2,17 @@
 This is an intel hex parser and CRC appender.  The program will go through an intel hex file and calculate a crc for it.
 Readme is currently for tagged version 2.3.5.35!
 
+## What is Mir?
+Mir is a Checksum appending tool for embedded development.  To ensure prevention of malicious code execution on an embedded device, a run-time integrity check from the bootloader
+is performed on flash memory of the microcontroller and it verifies this calculation with a calculation done after the binary was built on a PC.  But how does that original checksum
+get into the micro's flash?  That's what this tool does.  It parses an intel hex file, extracts the data from each record, converts the ASCII to hexadecimal, then calculates a
+checksum for it and appends that, along with the size of the binary, to a record of your choice based on your memory map!
+
+## How can it help me as an embedded developer?
+Mir can help by preventing the exercise in futility of writing an intel hex parser from scratch for this exact purpose.  Checksums are either done in software and hardware on a micro
+and this tool allows you to implement your own VERY quickly!  Instead of spending weeks designing and testing your own tool, just use Mir and apply your own checksum/CRC routine to
+the program and config file and you have your information ready to flash!
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -123,6 +134,8 @@ FileLoc:;
 
 ## Debug Information
 To assist with debugging information, there is a DEBUG_ACTIVE precomplied flag inside of ```main.h```, please switch it to true if you desire to see all debugging information as "printf".
+
+##
 
 ## Built With
 
