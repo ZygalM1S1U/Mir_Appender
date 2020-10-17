@@ -75,7 +75,7 @@ Once this has finished, you may open the project to build.  Build it and you are
 
 ## Setup
 Mir offers a few modes based on config values:
-````
+```
 1. Appender Mode - Runs and executes the checksum calculation on the file and paths inside config file.  Applied using a post-build script.
 2. UI Mode - For the purpose of seeing what the program is doing with your hex file.  With the debug flag on, it prints every byte it analyzes.
 3. Test mode - A custom shell for testing different parts of the program that you can implement!
