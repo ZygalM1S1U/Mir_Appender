@@ -175,7 +175,7 @@ void writeFrame(CrcAppendFileAttributes* crcFileInfo, FILE* filePointer)
     // Set all members of the buffer to 0, so that we only use instructions
     // for the things to be filled.
     memset(checksumBuffer, 0u, 12);
-    printf("Yes\n");
+
     // Appending the length
     checksumBuffer[0] = 0x08;
 
