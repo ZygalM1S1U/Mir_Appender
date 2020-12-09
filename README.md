@@ -1,6 +1,6 @@
 # Mir
 This is an intel hex parser and CRC appender.  The program will go through an intel hex file and calculate a crc for it.
-Readme is currently for tagged version 2.3.5.35!
+Readme is currently for tagged version 2.3.5.36!
 
 ## What is Mir?
 Mir is a Checksum appending tool for embedded development.  To ensure prevention of malicious code execution on an embedded device, a run-time integrity check from the bootloader
