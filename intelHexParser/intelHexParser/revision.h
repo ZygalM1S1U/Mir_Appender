@@ -6,7 +6,7 @@
 #define MIR_MAJOR   2
 #define MIR_MINOR   3
 #define MIR_BUILD   5
-#define MIR_DEV     35
+#define MIR_DEV     36
 
 #endif // _REVISION_H__
 
