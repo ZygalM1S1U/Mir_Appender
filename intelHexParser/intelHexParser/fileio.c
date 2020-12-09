@@ -167,15 +167,15 @@ void writeFrame(CrcAppendFileAttributes* crcFileInfo, FILE* filePointer)
     // Compute the checksum and convert to ascii
     // Length will always be 8
     uint8_t checksumBuffer[12];
-    uint8_t lengthHex[2];
+    uint8_t lengthHex[8];
     uint8_t crcHex[2];
     convASCIItoHex(crcFileInfo->crcToAppend, crcHex, 4);
-    convASCIItoHex(crcFileInfo->lengthToAppend, lengthHex, 4);
+    convASCIItoHex(crcFileInfo->lengthToAppend, lengthHex, 8);
 
     // Set all members of the buffer to 0, so that we only use instructions
     // for the things to be filled.
     memset(checksumBuffer, 0u, 12);
-
+    printf("Yes\n");
     // Appending the length
     checksumBuffer[0] = 0x08;
 
@@ -187,12 +187,14 @@ void writeFrame(CrcAppendFileAttributes* crcFileInfo, FILE* filePointer)
     checksumBuffer[2] = address & 0x00FF;
 
     // Length packing
-    checksumBuffer[4] = lengthHex[0];
-    checksumBuffer[5] = lengthHex[1];
+    checksumBuffer[3] = lengthHex[0];
+    checksumBuffer[4] = lengthHex[1];
+    checksumBuffer[5] = lengthHex[2];
+    checksumBuffer[6] = lengthHex[3];
 
     // Crc packing
-    checksumBuffer[6] = crcHex[0];
-    checksumBuffer[7] = crcHex[1];
+    checksumBuffer[7] = crcHex[0];
+    checksumBuffer[8] = crcHex[1];
 
 #if DEBUG_ACTIVE
     for(int i = 0; i < 12; ++i)
@@ -252,10 +254,14 @@ void littleEndianSwap(char* frameString, CrcAppendFileAttributes* crcFileInfo)
     printf("Little Endian storage\n");
 #endif
     // Build the string of the frame to append
-    frameString[0] = crcFileInfo->lengthToAppend[2];
-    frameString[1] = crcFileInfo->lengthToAppend[3];
-    frameString[2] = crcFileInfo->lengthToAppend[0];
-    frameString[3] = crcFileInfo->lengthToAppend[1];
+    frameString[0] = crcFileInfo->lengthToAppend[6];
+    frameString[1] = crcFileInfo->lengthToAppend[7];
+    frameString[2] = crcFileInfo->lengthToAppend[4];
+    frameString[3] = crcFileInfo->lengthToAppend[5];
+    frameString[4] = crcFileInfo->lengthToAppend[2];
+    frameString[5] = crcFileInfo->lengthToAppend[3];
+    frameString[6] = crcFileInfo->lengthToAppend[0];
+    frameString[7] = crcFileInfo->lengthToAppend[1];
     frameString[8] = crcFileInfo->crcToAppend[2];
     frameString[9] = crcFileInfo->crcToAppend[3];
     frameString[10] = crcFileInfo->crcToAppend[0];
@@ -274,6 +280,10 @@ void bigEndianSwap(char* frameString, CrcAppendFileAttributes* crcFileInfo)
     frameString[1] = crcFileInfo->lengthToAppend[1];
     frameString[2] = crcFileInfo->lengthToAppend[2];
     frameString[3] = crcFileInfo->lengthToAppend[3];
+    frameString[4] = crcFileInfo->lengthToAppend[4];
+    frameString[5] = crcFileInfo->lengthToAppend[5];
+    frameString[6] = crcFileInfo->lengthToAppend[6];
+    frameString[7] = crcFileInfo->lengthToAppend[7];;
     frameString[8] = crcFileInfo->crcToAppend[0];
     frameString[9] = crcFileInfo->crcToAppend[1];
     frameString[10] = crcFileInfo->crcToAppend[2];
@@ -289,8 +299,12 @@ void pdpEndianSwap(char* frameString, CrcAppendFileAttributes* crcFileInfo)
 #endif
     frameString[0] = crcFileInfo->lengthToAppend[2];
     frameString[1] = crcFileInfo->lengthToAppend[3];
-    frameString[2] = crcFileInfo->lengthToAppend[0];
-    frameString[3] = crcFileInfo->lengthToAppend[1];
+    frameString[2] = crcFileInfo->lengthToAppend[4];
+    frameString[3] = crcFileInfo->lengthToAppend[5];
+    frameString[4] = crcFileInfo->lengthToAppend[6];
+    frameString[5] = crcFileInfo->lengthToAppend[7];
+    frameString[6] = crcFileInfo->lengthToAppend[0];
+    frameString[7] = crcFileInfo->lengthToAppend[1];
     frameString[8] = crcFileInfo->crcToAppend[2];
     frameString[9] = crcFileInfo->crcToAppend[3];
     frameString[10] = crcFileInfo->crcToAppend[0];
@@ -305,10 +319,14 @@ void honeywell316EndianSwap(char* frameString, CrcAppendFileAttributes* crcFileI
     printf("Honeywell 316 storage\n");
 #endif
     // Build the string of the frame to append
-    frameString[8] = crcFileInfo->lengthToAppend[0];
-    frameString[9] = crcFileInfo->lengthToAppend[1];
-    frameString[10] = crcFileInfo->lengthToAppend[2];
-    frameString[11] = crcFileInfo->lengthToAppend[3];
+    frameString[0] = crcFileInfo->lengthToAppend[0];
+    frameString[1] = crcFileInfo->lengthToAppend[1];
+    frameString[2] = crcFileInfo->lengthToAppend[4];
+    frameString[3] = crcFileInfo->lengthToAppend[5];
+    frameString[4] = crcFileInfo->lengthToAppend[2];
+    frameString[5] = crcFileInfo->lengthToAppend[3];
+    frameString[6] = crcFileInfo->lengthToAppend[6];
+    frameString[7] = crcFileInfo->lengthToAppend[7];
     frameString[0] = crcFileInfo->crcToAppend[0];
     frameString[1] = crcFileInfo->crcToAppend[1];
     frameString[2] = crcFileInfo->crcToAppend[2];
@@ -326,6 +344,10 @@ void byteSwapSwapper(char* frameString, CrcAppendFileAttributes* crcFileInfo)
     frameString[1] = crcFileInfo->lengthToAppend[3];
     frameString[2] = crcFileInfo->lengthToAppend[0];
     frameString[3] = crcFileInfo->lengthToAppend[1];
+    frameString[4] = crcFileInfo->lengthToAppend[6];
+    frameString[5] = crcFileInfo->lengthToAppend[7];
+    frameString[6] = crcFileInfo->lengthToAppend[4];
+    frameString[7] = crcFileInfo->lengthToAppend[5];
     frameString[8] = crcFileInfo->crcToAppend[2];
     frameString[9] = crcFileInfo->crcToAppend[3];
     frameString[10] = crcFileInfo->crcToAppend[0];

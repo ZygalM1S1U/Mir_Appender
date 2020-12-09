@@ -196,7 +196,7 @@ PARSE_STATES extractRecord(void)
             // Check for the end of line
             if(fileIntelHex.currentRecord.currentAddress == mir.appendageAddressFile)
             {
-                crcFileInformation.appendIndex = i-INTEL_HEX_FILE_APPEND_OFFSET;
+                crcFileInformation.appendIndex = i - INTEL_HEX_FILE_APPEND_OFFSET;
 #if DEBUG_ACTIVE
                 printf("Appendage address found\n");
 #endif
@@ -282,7 +282,7 @@ void analyzeRecord(uint8_t* recordBuffer, uint8_t recordSize)
 #endif
 
     if(fileIntelHex.currentRecord.recordType == DATA
-            && fileIntelHex.currentRecord.currentAddress != mir.appendageAddressFile)
+    && fileIntelHex.currentRecord.currentAddress != mir.appendageAddressFile)
     {
         // Fill the CRC calc buffer with the record data and increment by the current record size
         memcpy(&intelHexFile.hexFileBuffer[fileIntelHex.fileSizeHex], dataBuffer, fileIntelHex.currentRecord.recordSize);
@@ -361,7 +361,7 @@ void calculateCRCBinaryBlob(void)
     // Calculate the CRC for the file
     fileIntelHex.fileCRC = (uint16_t)(*mir.crcSetting.crcCalculateFunc)(intelHexFile.hexFileBuffer, fileIntelHex.fileSizeHex);
 #if DEBUG_ACTIVE
-    printf("File size: 0x%04X  File CRC: 0x%04X\n", fileIntelHex.fileSizeHex, fileIntelHex.fileCRC);
+    printf("File size: 0x%08X  File CRC: 0x%04X\n", fileIntelHex.fileSizeHex, fileIntelHex.fileCRC);
 #endif
 
     uint8_t crc[2];
@@ -371,12 +371,14 @@ void calculateCRCBinaryBlob(void)
     printf("First nibble: 0x%04X\n", crc[0]);
 #endif
 
-    uint8_t length[2];
-    length[0] = fileIntelHex.fileSizeHex >> 8;
-    length[1] = fileIntelHex.fileSizeHex & 0x00FF;
+    uint8_t length[4];
+    length[0] = fileIntelHex.fileSizeHex >> 24;
+    length[1] = fileIntelHex.fileSizeHex >> 16;
+    length[2] = (fileIntelHex.fileSizeHex & 0x0000FF00) >> 8;
+    length[3] = (uint8_t)(fileIntelHex.fileSizeHex & 0x000000FF);
 
     char crcChar[4] = "";
-    char lengthChar[4] = "";
+    char lengthChar[8] = "";
 
     // Printing the length and CRC in ASCII
 
@@ -400,6 +402,13 @@ void calculateCRCBinaryBlob(void)
     crcFileInformation.lengthToAppend[2] = lengthChar[0];
     crcFileInformation.lengthToAppend[3] = lengthChar[1];
 
+    convHex2ASCII(length[2], lengthChar);
+    crcFileInformation.lengthToAppend[4] = lengthChar[0];
+    crcFileInformation.lengthToAppend[5] = lengthChar[1];
+    convHex2ASCII(length[3], lengthChar);
+    crcFileInformation.lengthToAppend[6] = lengthChar[0];
+    crcFileInformation.lengthToAppend[7] = lengthChar[1];
+
 #if DEBUG_ACTIVE
     printf("CRC ASCII: ");
     for(int i = 0; i < 4; ++i)
@@ -408,7 +417,7 @@ void calculateCRCBinaryBlob(void)
     printNewLine();
 
     printf("LENGTH ASCII: ");
-    for(int i = 0; i < 4; ++i)
+    for(int i = 0; i < 8; ++i)
         printf("%c", crcFileInformation.lengthToAppend[i]);
 
     printNewLine();

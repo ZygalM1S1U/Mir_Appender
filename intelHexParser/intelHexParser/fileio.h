@@ -45,7 +45,7 @@ typedef struct
     long    appendIndex;
     fpos_t  appendLocation;
     char    crcToAppend[4];
-    char    lengthToAppend[4];
+    char    lengthToAppend[8];
     char    checksum[2];
 }CrcAppendFileAttributes;
 
