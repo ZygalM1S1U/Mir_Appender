@@ -6,12 +6,12 @@
 #define MIR_MAJOR   2
 #define MIR_MINOR   3
 #define MIR_BUILD   5
-#define MIR_DEV     36
+#define MIR_DEV     37
 
 #endif // _REVISION_H__
 
 /* Build notes:
-   Mir version 2.3.5.35
+   Mir version 2.3.5.37
    Second major release
    Application features:
    - The application has three modes of operation: Appender mode, Test Mode, and UI mode
@@ -24,4 +24,5 @@
    - Appender Mode is now active.
    - Test mode may be implemented for custom tool running
    - UI mode provides context and debug information for understanding the tool's workings
+   - Bug fix for stack smashing
 */
