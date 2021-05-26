@@ -4,7 +4,7 @@ CFLAGS  = -g
 ifeq ($(OS),Windows_NT)
 	RM      = del
 else
-	RM      = rm -r
+        RM      = rm -r mir
 endif
 
 default:	all

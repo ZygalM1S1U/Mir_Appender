@@ -102,7 +102,7 @@ bool retrieveConfigurationSettings(void)
 
     /// @todo pull this from the config file
     /// @note hack for now
-    uint8_t appendAddress[8] = "";
+    uint8_t appendAddress[9] = "";
     convASCIItoHex((uint8_t*)asciiConfigSettings.appendAddress, appendAddress, sizeof(asciiConfigSettings.appendAddress));
     mir.appendageAddressFile = appendAddress[0] << 24 | appendAddress[1] << 16  | appendAddress[2] << 8 | appendAddress[3];
 
