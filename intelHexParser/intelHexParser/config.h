@@ -4,7 +4,7 @@
 #include "main.h"
 
 #define MIR_CONFIG_RECORD_MAX_SIZE      30
-#define MAX_STR_LEN 256
+#define MAX_STR_LEN                     256
 #define INDEX_UI                        3
 #define INDEX_CRC                       4
 #define INDEX_BYTE                      5

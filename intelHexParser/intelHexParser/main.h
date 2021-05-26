@@ -24,7 +24,6 @@
 #define MENU_ITEM_3     "3. Help\n"
 #define MENU_ITEM_4     "4. Exit\n"
 
-#define MAX_STR_LEN 256
 
 typedef uint8_t menuItem;
 typedef uint8_t errorArg;
