@@ -245,9 +245,16 @@ bool retrieveConfigurationSettings(void)
     // Assign the File Type, but only if the mode is set to appender mode
     memcpy(&mir.fileType, &asciiConfigSettings.fileType, asciiConfigSettings.sizes[MIR_RECORD_FILE_TYPE]);
 
+
+    // Assign the byte order
+    /// @todo HACK FOR NOW
+    uint8_t fileType[2] = "";
+    convASCIItoHex((uint8_t*)asciiConfigSettings.fileType, fileType, 2);
+    mir.fileType = fileType[0];
+
 #if    DEBUG_ACTIVE
     printf("File I/O Type:");
-    printString((char*)mir.fileType, asciiConfigSettings.sizes[MIR_RECORD_FILE_TYPE]);
+    printf("0x%02X ", mir.fileType);
     printNewLine();
 #endif
 

@@ -49,6 +49,9 @@ void errorState(errorArg error);
 /// @brief Print the current time when the program starts
 void printTime(void);
 
+/// @brief selects the parser type
+void parserSelector(char* inputFilePath);
+
 int main(void)
 {
     // If this does not pull the correct config settings, then it will crash the program
@@ -114,17 +117,7 @@ void appenderMode(void)
 {
     // Just do the thing and no one gets hurt.
     // Start the parsing
-    switch(mir.fileType)
-    {
-    case INTEL_HEX:
-        parse(mir.fullFileInputPath);
-        break;
-    case SREC:
-        break;
-    default:
-        printf("Filetype that was specified in mirConfig.mir is not supported\n");
-        break;
-    }
+    parserSelector(mir.fullFileInputPath);
 }
 
 void testMode(void)
@@ -197,7 +190,7 @@ PROGRAM_STATES currentMenuPrint(MENU_STATES currentMenuState, char* inputString)
         {
             // If the length is less than 0, proceed.
             // Start the parsing task
-            parse(inputString);
+            parserSelector(inputString);
             menuState = MAIN_MENU_USER_PROMPT;
             menuPrompt = 1;
         }
@@ -377,3 +370,17 @@ void crcTestFunc(void)
     printf("Implement your own test in here.\n");
 }
 
+void parserSelector(char* inputFilePath)
+{
+    switch(mir.fileType)
+    {
+    case INTEL_HEX:
+        parse(inputFilePath);
+        break;
+    case SREC:
+        break;
+    default:
+        printf("Filetype that was specified in mirConfig.mir is not supported\n");
+        break;
+    }
+}

@@ -91,8 +91,13 @@ void qBMenu(void)
 
 void ConfigMenu(void)
 {
-    printf("Current Configuration Settings");
+    printf("Current Configuration Settings:");
     printNewLine();
+
+    printf("Mir File Type: ");
+    printf("0x%02X ", mir.fileType);
+    printNewLine();
+
     printf("Append Address: ");
     printf("0x%08X ", mir.appendageAddressFile);
     printNewLine();
