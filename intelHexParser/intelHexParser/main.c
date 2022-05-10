@@ -113,9 +113,18 @@ void uiMode(void)
 void appenderMode(void)
 {
     // Just do the thing and no one gets hurt.
-    /// @todo Pull the file name, file path, etc... from the config file
     // Start the parsing
-    parse(mir.fullFileInputPath);
+    switch(mir.fileType)
+    {
+    case INTEL_HEX:
+        parse(mir.fullFileInputPath);
+        break;
+    case SREC:
+        break;
+    default:
+        printf("Filetype that was specified in mirConfig.mir is not supported\n");
+        break;
+    }
 }
 
 void testMode(void)

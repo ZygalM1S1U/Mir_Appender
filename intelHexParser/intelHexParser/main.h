@@ -15,7 +15,7 @@
 #include "config.h"
 
 /// @note Debug param
-#define DEBUG_ACTIVE    false
+#define DEBUG_ACTIVE    1
 
 /// @section String list
 #define MAIN_MENU       "Main Menu\n"

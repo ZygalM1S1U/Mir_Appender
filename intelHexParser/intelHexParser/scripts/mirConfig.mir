@@ -6,3 +6,4 @@ FileLoc:;
 FileName:app.hex;
 OpName:appCRC.hex;
 OpLoc:;
+FileType:00;

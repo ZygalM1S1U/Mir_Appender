@@ -24,6 +24,7 @@ typedef enum MIR_CONFIG_FILE_RECORD_TYPES_t
     MIR_RECORD_FILE_NAME,
     MIR_RECORD_FILE_OUTPUT_NAME,
     MIR_RECORD_FILE_OUTPUT_LOCATION,
+    MIR_RECORD_FILE_TYPE,
     NUM_OF_MIR_RECORD_TYPES
 }MIR_CONFIG_FILE_RECORD_TYPES;
 
@@ -54,6 +55,13 @@ typedef enum CRC_FUNCTIONS_t
     NUM_OF_CRC_FUNCS
 }CRC_FUNCTIONS;
 
+typedef enum MIR_FILE_TYPES_t
+{
+    INTEL_HEX = 0u,
+    SREC,
+    NUM_OF_FILE_TYPES
+}MIR_FILE_TYPES;
+
 typedef uint16_t (*CrcFunction)(const uint8_t* data, const long size);
 
 
@@ -79,6 +87,7 @@ typedef struct
     fpos_t  		      currentLocation;
     MIR_OPERATING_MODES   mirMode;
     MIR_BYTE_ORDER_CONFIG byteOrder;
+    MIR_FILE_TYPES        fileType;
     char fileLocation[MAX_STR_LEN];
     char fileName[MAX_STR_LEN];
     char outputLocation[MAX_STR_LEN];
