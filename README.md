@@ -98,6 +98,7 @@ FileLoc:;
 FileName:app.hex;
 OpName:appCRC.hex;
 OpLoc:;
+FileType:00;
 ```
 
 1st record - The Enum number for the operating mode, currently, here they are from config.h
@@ -142,6 +143,12 @@ FileLoc:;
 7th record - The name of the output and CRC & Length appended file modified from the original file.
 
 8th record - The output file location directory
+
+9th record - The File Type selected for parsing, Mir supports the following filetypes
+``
+00 - INTEL_HEX,
+01 - MOTOROLA_SREC - Not fully supported yet, in development
+`` 
 
 ## Adding My Own Checksum Function
 To add your own function follow these steps:
