@@ -73,6 +73,7 @@ typedef struct
 typedef struct
 {
     char* fileName;
+    char* header;
     MotorolaSRecordField currentRecord;
     long fileSizeASCII;
     long fileSizeHex;

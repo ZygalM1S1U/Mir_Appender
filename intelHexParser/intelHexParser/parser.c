@@ -526,13 +526,15 @@ void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
         uint8_t recordTypeASCII[2] = "";
         uint8_t typeBuffer[1] = "";
 
-        // store the record size
-        recordTypeASCII[0] = fileMotoHex.motorolaHexFileASCII[currentFileIndex+1];
+        // store the record Type, S becomes a 0
+        recordTypeASCII[0] = "0";
         recordTypeASCII[1] = fileMotoHex.motorolaHexFileASCII[currentFileIndex+2];
 
         convASCIItoHex(recordTypeASCII, typeBuffer, 2);
 
-        motoRecordTypeHandler(*(uint8_t*)typeBuffer);
+        fileMotoHex.currentRecord.recordType = *(MOTOROLA_RECORD_TYPES*)typeBuffer;
+
+        printf("record type: ");
 
         // Keep the size
        // fileMotoHex.currentRecord.recordType
@@ -546,7 +548,7 @@ void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
 
 void motoRecordTypeHandler(uint8_t recordType)
 {
-    switch(recordType & 0x0F)
+    switch(recordType)
     {
     case HEADER:
         fileMotoHex.currentRecord.recordType = HEADER;
