@@ -8,11 +8,16 @@
 #define INTEL_HEX_FILE_APPEND_OFFSET 19
 CrcAppendFileAttributes crcFileInformation;
 
+/// @section Motorola Delimiters
+#define MOTOROLA_SREC_TYPE_DELIMITER 0
+#define MOTOROLA_SREC_SIZE_DELIMITER 2
+
 /// @section Private prototypes
 void clearFile(void);
 void calculateCRCBinaryBlob(void);
 void recordTypeHandler(RECORD_TYPES recordType, uint8_t* data);
 void appendCRC(void);
+void extractAndStoreHexFromRecords(void);
 
 bool fileParsing = true;
 bool foundAppendAddress = false;
@@ -59,8 +64,9 @@ void parse(char* hexFilePath)
             // Append the CRC to the file after copying
             if(foundAppendAddress)
             {
-                printf("File size: 0x%04X  File CRC: 0x%04X\n", fileIntelHex.fileSizeHex, fileIntelHex.fileCRC);
-                printf("Total execution time: %f ms\n", 1000*((double)(clock() - start_t)/ CLOCKS_PER_SEC));
+                printf("File size: 0x%08X  File CRC: 0x%04X\n", fileIntelHex.fileSizeHex, fileIntelHex.fileCRC);
+                mir.lastKnownExecutionTime = 1000*((double)(clock() - start_t)/ CLOCKS_PER_SEC);
+                printf("Total execution time: %f ms\n", mir.lastKnownExecutionTime);
                 appendCRC();
             }
             else
@@ -282,7 +288,7 @@ void analyzeRecord(uint8_t* recordBuffer, uint8_t recordSize)
 #endif
 
     if(fileIntelHex.currentRecord.recordType == DATA
-    && fileIntelHex.currentRecord.currentAddress != mir.appendageAddressFile)
+            && fileIntelHex.currentRecord.currentAddress != mir.appendageAddressFile)
     {
         // Fill the CRC calc buffer with the record data and increment by the current record size
         memcpy(&intelHexFile.hexFileBuffer[fileIntelHex.fileSizeHex], dataBuffer, fileIntelHex.currentRecord.recordSize);
@@ -472,5 +478,106 @@ void appendCRC(void)
 {
     // Copy the file into the new place for the appendage
     copyFileAndAppendFrame(mir.fullFileInputPath, &crcFileInformation);
+}
+
+void parseSREC(char* hexFilePath)
+{
+    clock_t start_t;
+
+    if(dumpMotoFile(hexFilePath))
+    {
+        start_t = clock();
+    }
+}
+
+void extractAndStoreHexFromRecords(void)
+{
+    bool lineBeginFlag = true;
+    uint16_t lineIndex = 0u;
+
+    for(long i = 0; i < fileMotoHex.fileSizeASCII; ++i)
+    {
+        // Start looking
+        if(lineBeginFlag)
+        {
+            lineBeginFlag = false;
+
+            //fileMotoHex.currentRecord
+        }
+
+        decipherSRecord(lineIndex, i);
+
+        ++lineIndex;
+
+        // Check for the end of line
+        if(fileMotoHex.motorolaHexFileASCII[i] == '\n')
+        {
+            lineBeginFlag = true;
+            lineIndex = 0u;
+        }
+    }
+}
+
+void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
+{
+    if(lineIndex >  MOTOROLA_SREC_TYPE_DELIMITER
+    && lineIndex <= MOTOROLA_SREC_SIZE_DELIMITER)
+    {
+        uint8_t recordTypeASCII[2] = "";
+        uint8_t typeBuffer[1] = "";
+
+        // store the record size
+        recordTypeASCII[0] = fileMotoHex.motorolaHexFileASCII[currentFileIndex+1];
+        recordTypeASCII[1] = fileMotoHex.motorolaHexFileASCII[currentFileIndex+2];
+
+        convASCIItoHex(recordTypeASCII, typeBuffer, 2);
+
+        motoRecordTypeHandler(*(uint8_t*)typeBuffer);
+
+        // Keep the size
+       // fileMotoHex.currentRecord.recordType
+    }
+    else if(lineIndex > MOTOROLA_SREC_SIZE_DELIMITER)
+    {
+
+    }
+}
+
+
+void motoRecordTypeHandler(uint8_t recordType)
+{
+    switch(recordType & 0x0F)
+    {
+    case HEADER:
+        fileMotoHex.currentRecord.recordType = HEADER;
+        break;
+    case DATA_S1:
+        fileMotoHex.currentRecord.recordType = DATA_S1;
+        break;
+    case DATA_S2:
+        fileMotoHex.currentRecord.recordType = DATA_S2;
+        break;
+    case DATA_S3:
+        fileMotoHex.currentRecord.recordType = DATA_S3;
+        break;
+    case COUNT_S5:
+        fileMotoHex.currentRecord.recordType = COUNT_S5;
+        break;
+    case COUNT_S6:
+        fileMotoHex.currentRecord.recordType = COUNT_S6;
+        break;
+    case START_ADDR_S7:
+        fileMotoHex.currentRecord.recordType = START_ADDR_S7;
+        break;
+    case START_ADDR_S8:
+        fileMotoHex.currentRecord.recordType = START_ADDR_S8;
+        break;
+    case START_ADDR_S9:
+        fileMotoHex.currentRecord.recordType = START_ADDR_S9;
+        break;
+    case RESERVED_S4:
+    default:
+        break;
+    }
 }
 

@@ -55,6 +55,54 @@ bool dumpFile(char* fileString)
 
 }
 
+bool dumpMotoFile(char* fileString)
+{
+    // Local Variables
+    bool retVal = true;
+    long hexFileSizeASCII = 0;
+
+    // Local pointers
+    FILE* fp;
+
+#if DEBUG_ACTIVE
+    printf("DEBUG : %s\n", fileString);
+#endif // DEBUG_ACTIVE
+
+    fileMotoHex.fileName = calloc(1, 25);
+
+    // Copy the hex file
+    memcpy(fileMotoHex.fileName, fileString, 25);
+
+    // Open the file and check for errors
+    fp = fopen(fileString, "rb");
+    if(!fp) perror(fileString), exit(1);
+
+    // Find the EOF and find the size
+    fseek(fp, 0L, SEEK_END);
+    hexFileSizeASCII = ftell(fp);
+
+    // rewind the file pointer
+    rewind(fp);
+
+    // Allocate the entire file
+    fileMotoHex.motorolaHexFileASCII = calloc(1, hexFileSizeASCII + 1);
+    if(!fileMotoHex.motorolaHexFileASCII) fclose(fp), fputs("Memory allocation for the file failed", stderr), getchar(), exit(1);
+
+    // Copy the entire file into a buffer
+    if(1 != fread(fileMotoHex.motorolaHexFileASCII, hexFileSizeASCII, 1, fp))
+        fclose(fp), free(fileMotoHex.motorolaHexFileASCII), fputs("Entire read fails", stderr), getchar(), exit(1);
+
+    // Copy the ASCII size and dump the whole file, should already be allocated.
+    fileMotoHex.fileSizeASCII = hexFileSizeASCII;
+
+    // Close the file
+    fclose(fp);
+
+    // file has been dumped
+    return retVal;
+
+}
+
 void filePrint(void)
 {
     for(int i = 0; i < fileIntelHex.fileSizeASCII; ++i)

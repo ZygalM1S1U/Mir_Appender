@@ -1,7 +1,7 @@
 UI:01;
 CRC:02;
 Byte:00;
-Append:080000F8;
+Append:0802FFF8;
 FileLoc:;
 FileName:app.hex;
 OpName:appCRC.hex;

@@ -368,6 +368,12 @@ void crcTestFunc(void)
     frameBuffer[2] = 0x90;
     printf("Checksum 256 Test: 0x%02X\n", checksum2sComp(frameBuffer, 8));*/
     printf("Implement your own test in here.\n");
+
+    printf("Execution Time Tester\n");
+    for(int i = 0; i < 15; ++i)
+    {
+        parserSelector(mir.fullFileInputPath);
+    }
 }
 
 void parserSelector(char* inputFilePath)

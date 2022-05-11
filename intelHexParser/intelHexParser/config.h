@@ -97,6 +97,9 @@ typedef struct
     char fullFileOutputPath[MAX_STR_LEN];
     uint8_t sizeOfOutputPath;
     uint8_t sizes[NUM_OF_MIR_RECORD_TYPES];
+
+    // Stats
+    double lastKnownExecutionTime;
 }mirConfiguratonSettings;
 
 mirConfiguratonSettings mir;

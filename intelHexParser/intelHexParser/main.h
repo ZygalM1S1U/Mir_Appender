@@ -15,7 +15,7 @@
 #include "config.h"
 
 /// @note Debug param
-#define DEBUG_ACTIVE    1
+#define DEBUG_ACTIVE    0
 
 /// @section String list
 #define MAIN_MENU       "Main Menu\n"
@@ -34,6 +34,12 @@ typedef struct
     unsigned long fileSize;
     uint8_t* hexFileBuffer;
 }hexFile;
+
+typedef struct
+{
+    unsigned long fileSize;
+    uint8_t* hexFileBuffer;
+}SRECFile;
 
 hexFile intelHexFile;
 
