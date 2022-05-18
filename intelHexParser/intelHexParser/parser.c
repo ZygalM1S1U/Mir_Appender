@@ -12,12 +12,30 @@ CrcAppendFileAttributes crcFileInformation;
 #define MOTOROLA_SREC_TYPE_DELIMITER 0
 #define MOTOROLA_SREC_SIZE_DELIMITER 2
 
+
+char srecTextMap[NUM_MOTO_RECORD_TYPES][20] = {
+    "HEADER = 0",   // 16-bit address
+    "DATA_S1",      // 16-bit address
+    "DATA_S2",      // 24-bit address
+    "DATA_S3",      // 32-bit address
+    "RESERVED_S4",  // N/A
+    "COUNT_S5",     // 16-bit count
+    "COUNT_S6",     // 24-bit count
+    "START_ADDR_S7",// 32-bit address
+    "START_ADDR_S8",// 24-bit address
+    "START_ADDR_S9",// 16-bit address
+    };
+
+
 /// @section Private prototypes
 void clearFile(void);
 void calculateCRCBinaryBlob(void);
 void recordTypeHandler(RECORD_TYPES recordType, uint8_t* data);
 void appendCRC(void);
 void extractAndStoreHexFromRecords(void);
+void decipherSRecord(uint16_t lineIndex, long currentFileIndex);
+void motoRecordTypeHandler(MOTOROLA_RECORD_TYPES recordType, char* lineBuffer, long lineSize);
+void motoRecordHeaderHandler(char* lineBuffer, long lineSize);
 
 bool fileParsing = true;
 bool foundAppendAddress = false;
@@ -487,32 +505,43 @@ void parseSREC(char* hexFilePath)
     if(dumpMotoFile(hexFilePath))
     {
         start_t = clock();
+
+        extractAndStoreHexFromRecords();
     }
 }
 
 void extractAndStoreHexFromRecords(void)
 {
-    bool lineBeginFlag = true;
+    bool lineBeginFlag = false;
     uint16_t lineIndex = 0u;
+    long lineCount = 0u;
+
+#if DEBUG_ACTIVE
+    printf("File size ASCII: %d", fileMotoHex.fileSizeASCII);
+    printNewLine();
+#endif
 
     for(long i = 0; i < fileMotoHex.fileSizeASCII; ++i)
     {
         // Start looking
-        if(lineBeginFlag)
+        if(fileMotoHex.motorolaHexFileASCII[i] == 83 && lineBeginFlag == false)
         {
-            lineBeginFlag = false;
-
-            //fileMotoHex.currentRecord
+            lineBeginFlag = true;
         }
 
         decipherSRecord(lineIndex, i);
 
-        ++lineIndex;
+        if(lineBeginFlag)
+            ++lineIndex;
 
         // Check for the end of line
         if(fileMotoHex.motorolaHexFileASCII[i] == '\n')
         {
-            lineBeginFlag = true;
+            lineBeginFlag = false;
+#if DEBUG_ACTIVE
+
+        printf("Line Count: %u\n", lineCount++);
+#endif
             lineIndex = 0u;
         }
     }
@@ -520,66 +549,89 @@ void extractAndStoreHexFromRecords(void)
 
 void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
 {
-    if(lineIndex >  MOTOROLA_SREC_TYPE_DELIMITER
-    && lineIndex <= MOTOROLA_SREC_SIZE_DELIMITER)
+    static long fileSizeHold;
+
+    if(lineIndex == MOTOROLA_SREC_SIZE_DELIMITER-1)
     {
-        uint8_t recordTypeASCII[2] = "";
+        char recordTypeASCII[2] = "";
         uint8_t typeBuffer[1] = "";
 
         // store the record Type, S becomes a 0
-        recordTypeASCII[0] = "0";
-        recordTypeASCII[1] = fileMotoHex.motorolaHexFileASCII[currentFileIndex+2];
+        recordTypeASCII[0] = '0';
+        recordTypeASCII[1] = fileMotoHex.motorolaHexFileASCII[currentFileIndex];
+
+#if DEBUG_ACTIVE
+        // Save the FP Index
+        fileSizeHold = currentFileIndex;
+#endif
 
         convASCIItoHex(recordTypeASCII, typeBuffer, 2);
 
-        fileMotoHex.currentRecord.recordType = *(MOTOROLA_RECORD_TYPES*)typeBuffer;
+        fileMotoHex.currentRecord.recordType = *(uint8_t*)typeBuffer;
 
-        printf("record type: ");
-
-        // Keep the size
-       // fileMotoHex.currentRecord.recordType
+#if DEBUG_ACTIVE
+        printf("Record Type ASCII: %c%c ", fileMotoHex.motorolaHexFileASCII[currentFileIndex], fileMotoHex.motorolaHexFileASCII[currentFileIndex+1]);
+        printf("Record Type hex: 0x%04X - ", fileMotoHex.currentRecord.recordType);
+        printf("%s\n", srecTextMap[fileMotoHex.currentRecord.recordType]);
+#endif
     }
-    else if(lineIndex > MOTOROLA_SREC_SIZE_DELIMITER)
+    else if(lineIndex == MOTOROLA_SREC_SIZE_DELIMITER)
     {
+        char recordSizeASCII[2] = "";
+        uint8_t sizeBuffer[1] = "";
 
+        // store the record Type, S becomes a 0
+        recordSizeASCII[0] = fileMotoHex.motorolaHexFileASCII[currentFileIndex];;
+        recordSizeASCII[1] = fileMotoHex.motorolaHexFileASCII[currentFileIndex];
+
+        convASCIItoHex((uint8_t*)&fileMotoHex.motorolaHexFileASCII[currentFileIndex], sizeBuffer, 2);
+
+        fileMotoHex.currentRecord.recordSize = *(uint8_t*)sizeBuffer;
+
+#if DEBUG_ACTIVE
+        printf("Record Size ASCII: %c%c ", fileMotoHex.motorolaHexFileASCII[currentFileIndex], fileMotoHex.motorolaHexFileASCII[currentFileIndex]);
+        printf("Record Size hex: 0x%02X\n", fileMotoHex.currentRecord.recordSize);
+        printf("Line Contents ASCII: ");
+        for(int j = 0; j < ((fileMotoHex.currentRecord.recordSize*2)+2); ++j)
+            printf("%c", fileMotoHex.motorolaHexFileASCII[currentFileIndex+j]);
+        printNewLine();
+
+#endif
     }
 }
 
 
-void motoRecordTypeHandler(uint8_t recordType)
+void motoRecordTypeHandler(MOTOROLA_RECORD_TYPES recordType, char* lineBuffer, long lineSize)
 {
     switch(recordType)
     {
     case HEADER:
-        fileMotoHex.currentRecord.recordType = HEADER;
+        motoRecordHeaderHandler(lineBuffer, lineSize);
         break;
     case DATA_S1:
-        fileMotoHex.currentRecord.recordType = DATA_S1;
         break;
     case DATA_S2:
-        fileMotoHex.currentRecord.recordType = DATA_S2;
         break;
     case DATA_S3:
-        fileMotoHex.currentRecord.recordType = DATA_S3;
         break;
     case COUNT_S5:
-        fileMotoHex.currentRecord.recordType = COUNT_S5;
         break;
     case COUNT_S6:
-        fileMotoHex.currentRecord.recordType = COUNT_S6;
         break;
     case START_ADDR_S7:
-        fileMotoHex.currentRecord.recordType = START_ADDR_S7;
         break;
     case START_ADDR_S8:
-        fileMotoHex.currentRecord.recordType = START_ADDR_S8;
         break;
     case START_ADDR_S9:
-        fileMotoHex.currentRecord.recordType = START_ADDR_S9;
         break;
     case RESERVED_S4:
     default:
         break;
     }
+}
+
+void motoRecordHeaderHandler(char* lineBuffer, long lineSize)
+{
+
 }
 

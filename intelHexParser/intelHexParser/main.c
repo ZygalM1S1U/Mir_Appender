@@ -384,6 +384,7 @@ void parserSelector(char* inputFilePath)
         parse(inputFilePath);
         break;
     case SREC:
+        parseSREC(inputFilePath);
         break;
     default:
         printf("Filetype that was specified in mirConfig.mir is not supported\n");

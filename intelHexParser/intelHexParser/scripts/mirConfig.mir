@@ -1,9 +1,9 @@
-UI:01;
+UI:00;
 CRC:02;
 Byte:00;
 Append:0802FFF8;
 FileLoc:;
-FileName:app.hex;
+FileName:srectest.hex;
 OpName:appCRC.hex;
 OpLoc:;
-FileType:00;
+FileType:01;

@@ -26,6 +26,9 @@ typedef enum PARSE_STATES_t
 /// @brief Parse the record
 void parse(char* hexFilePath);
 
+/// @brief Parse SREC files
+void parseSREC(char* hexFilePath);
+
 /// @brief Extract the record pushed from the fileio module
 PARSE_STATES extractRecord(void);
 
