@@ -60,7 +60,7 @@ typedef struct
 
 typedef struct
 {
-    uint8_t HeaderHex[74];
+    uint8_t HeaderHex[0xFF];
     char moduleName[20];
     char versionNumber[2];
     char revisionNumber[2];

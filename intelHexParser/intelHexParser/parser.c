@@ -527,7 +527,8 @@ void extractAndStoreHexFromRecords(void)
     for(long i = 0; i < fileMotorolaSREC.fileSizeASCII; ++i)
     {
         // Start looking
-        if(fileMotorolaSREC.motorolaHexFileASCII[i] == 83 && lineBeginFlag == false)
+        if(fileMotorolaSREC.motorolaHexFileASCII[i] == 'S'
+        && lineBeginFlag == false)
         {
             lineBeginFlag = true;
 #if DEBUG_ACTIVE
@@ -545,7 +546,8 @@ void extractAndStoreHexFromRecords(void)
         {
             // Handle the data parsed in the record itself
             motoRecordTypeHandler(fileMotorolaSREC.currentRecord.recordType,
-                                  fileMotorolaSREC.currentRecord.data,
+                                 (fileMotorolaSREC.currentRecord.recordType == HEADER)
+                                ? fileMotorolaSREC.header.HeaderHex : fileMotorolaSREC.currentRecord.data,
                                   fileMotorolaSREC.currentRecord.recordSize);
 
             lineBeginFlag = false;
@@ -582,7 +584,7 @@ void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
         fileMotorolaSREC.currentRecord.recordType = *(uint8_t*)typeBuffer;
 
 #if DEBUG_ACTIVE
-        printf("Record Type ASCII: %c%c ", fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex-1], fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex]);
+        printf("Record Type ASCII: %c%c \n", fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex-1], fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex]);
         printf("Record Type hex: 0x%04X - ", fileMotorolaSREC.currentRecord.recordType);
         printf("%s\n", srecTextMap[fileMotorolaSREC.currentRecord.recordType]);
 #endif
@@ -601,11 +603,11 @@ void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
         fileMotorolaSREC.currentRecord.recordSize = *(uint8_t*)sizeBuffer;
 
 #if DEBUG_ACTIVE
-        printf("Record Size ASCII: %c%c ", fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex], fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex+1]);
+        printf("Record Size ASCII: %c%c\n", fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex], fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex+1]);
         printf("Record Size hex: 0x%02X\n", fileMotorolaSREC.currentRecord.recordSize);
-        printf("Line Contents ASCII: ");
-        for(int j = 4; j < ((fileMotorolaSREC.currentRecord.recordSize*2)+4); ++j)
-            printf("%c", fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex+(srecSizeLUT[fileMotorolaSREC.currentRecord.recordSize]*2)+j]);
+       /* printf("Line Contents ASCII: ");
+        for(int j = 0; j < fileMotorolaSREC.currentRecord.recordSize; ++j)
+            printf("%c", fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex+(srecSizeLUT[fileMotorolaSREC.currentRecord.recordSize]*2)+j]);*/
         printNewLine();
 #endif
     }
@@ -622,21 +624,44 @@ void decipherSRecord(uint16_t lineIndex, long currentFileIndex)
             recordAddressASCII[i] = fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex+i];
         }
 
-        printf("Record Address ASCII:  ");
+        printf("Record Address ASCII: ");
         printString(recordAddressASCII, srecSizeLUT[fileMotorolaSREC.currentRecord.recordType] * 2);
         printf("Record Address hex: 0x%08X\n", fileMotorolaSREC.currentRecord.recordAddress);
+        printf("Address size Hex : 0x%02X\n", srecSizeLUT[fileMotorolaSREC.currentRecord.recordType]);
 #endif
     }
-    else if(lineIndex == MOTOROLA_SREC_ADDRESS_DELIMITER+(fileMotorolaSREC.currentRecord.recordSize*2)+1)
+    else if(lineIndex == (MOTOROLA_SREC_ADDRESS_DELIMITER+(srecSizeLUT[fileMotorolaSREC.currentRecord.recordType]*2)))
     {
+        // Check to see if we are in the header
+        if(fileMotorolaSREC.currentRecord.recordType != HEADER)
+        {
+            convASCIItoHex((uint8_t*)&fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex],
+                           fileMotorolaSREC.currentRecord.data,
+                          (fileMotorolaSREC.currentRecord.recordSize-1-srecSizeLUT[fileMotorolaSREC.currentRecord.recordType])*2);
+        }
+        else
+        {
+            convASCIItoHex((uint8_t*)&fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex],
+                           fileMotorolaSREC.header.HeaderHex,
+                          (fileMotorolaSREC.currentRecord.recordSize-1-srecSizeLUT[fileMotorolaSREC.currentRecord.recordType])*2);
+        }
+
         // Data
 #if DEBUG_ACTIVE
-        convASCIItoHex((uint8_t*)&fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex], fileMotorolaSREC.currentRecord.data, fileMotorolaSREC.currentRecord.recordSize);
         printf("Record Data ASCII:  ");
-        printString(&fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex], fileMotorolaSREC.currentRecord.recordSize * 2);
+        printString(&fileMotorolaSREC.motorolaHexFileASCII[currentFileIndex],
+                   (fileMotorolaSREC.currentRecord.recordSize-(srecSizeLUT[fileMotorolaSREC.currentRecord.recordType])-1)*2);
         printf("Record Data hex: ");
-        for(int i = 0; i < fileMotorolaSREC.currentRecord.recordSize; ++i)
-            printf("0x%02X ", fileMotorolaSREC.currentRecord.data[i]);
+        if(fileMotorolaSREC.currentRecord.recordType == HEADER)
+        {
+            for(int i = 0; i < fileMotorolaSREC.currentRecord.recordSize-1-srecSizeLUT[fileMotorolaSREC.currentRecord.recordType]; ++i)
+                printf("0x%02X ", fileMotorolaSREC.header.HeaderHex[i]);
+        }
+        else
+        {
+            for(int i = 0; i < fileMotorolaSREC.currentRecord.recordSize-1-srecSizeLUT[fileMotorolaSREC.currentRecord.recordType]; ++i)
+                printf("0x%02X ", fileMotorolaSREC.currentRecord.data[i]);
+        }
         printNewLine();
 #endif
     }
@@ -675,9 +700,6 @@ void motoRecordTypeHandler(MOTOROLA_RECORD_TYPES recordType, char* lineBuffer, l
 void motoRecordHeaderHandler(char* lineBuffer, long lineSize)
 {
 
-    // Copy the header in hex format.  This will need to get converted to ASCII later
-    memcpy(fileMotorolaSREC.header.HeaderHex, lineBuffer, sizeof(fileMotorolaSREC.header.HeaderHex));
-
     // Calculate the description size
     fileMotorolaSREC.header.headerSize = fileMotorolaSREC.currentRecord.recordSize;
     fileMotorolaSREC.header.descriptionSize = (fileMotorolaSREC.header.headerSize
@@ -689,14 +711,14 @@ void motoRecordHeaderHandler(char* lineBuffer, long lineSize)
     printf("Header Size: 0x%02X\n", fileMotorolaSREC.header.headerSize);
     printf("Description Size: 0x%02X\n", fileMotorolaSREC.header.descriptionSize);
     printf("IF NO SREC PARAMETERS ARE PRESENT, THIS MESSAGE WILL BE PRINTED AND THE REST WILL BE BLANK\n");
-    printString(lineBuffer, lineSize);
+    printString((char*)fileMotorolaSREC.header.HeaderHex, fileMotorolaSREC.header.headerSize);
 #endif
 
     // Copy everything into the header struct
-    memcpy(&lineBuffer[0], fileMotorolaSREC.header.moduleName, sizeof(fileMotorolaSREC.header.moduleName));
-    memcpy(&lineBuffer[20], fileMotorolaSREC.header.revisionNumber, sizeof(fileMotorolaSREC.header.revisionNumber));
-    memcpy(&lineBuffer[22], fileMotorolaSREC.header.revisionNumber, sizeof(fileMotorolaSREC.header.revisionNumber));
-    memcpy(&lineBuffer[24], fileMotorolaSREC.header.description, fileMotorolaSREC.header.descriptionSize);
+    memcpy(fileMotorolaSREC.header.moduleName, &lineBuffer[0], sizeof(fileMotorolaSREC.header.moduleName));
+    memcpy(fileMotorolaSREC.header.revisionNumber, &lineBuffer[20], sizeof(fileMotorolaSREC.header.revisionNumber));
+    memcpy(fileMotorolaSREC.header.revisionNumber, &lineBuffer[22], sizeof(fileMotorolaSREC.header.revisionNumber));
+    memcpy(fileMotorolaSREC.header.description, &lineBuffer[24], fileMotorolaSREC.header.descriptionSize);
 
 #if DEBUG_ACTIVE
     printf("MODULE NAME - ");
