@@ -68,10 +68,10 @@ bool dumpMotoFile(char* fileString)
     printf("DEBUG : %s\n", fileString);
 #endif // DEBUG_ACTIVE
 
-    fileMotoHex.fileName = calloc(1, 25);
+    fileMotorolaSREC.fileName = calloc(1, 25);
 
     // Copy the hex file
-    memcpy(fileMotoHex.fileName, fileString, 25);
+    memcpy(fileMotorolaSREC.fileName, fileString, 25);
 
     // Open the file and check for errors
     fp = fopen(fileString, "rb");
@@ -85,15 +85,15 @@ bool dumpMotoFile(char* fileString)
     rewind(fp);
 
     // Allocate the entire file
-    fileMotoHex.motorolaHexFileASCII = calloc(1, hexFileSizeASCII + 1);
-    if(!fileMotoHex.motorolaHexFileASCII) fclose(fp), fputs("Memory allocation for the file failed", stderr), getchar(), exit(1);
+    fileMotorolaSREC.motorolaHexFileASCII = calloc(1, hexFileSizeASCII + 1);
+    if(!fileMotorolaSREC.motorolaHexFileASCII) fclose(fp), fputs("Memory allocation for the file failed", stderr), getchar(), exit(1);
 
     // Copy the entire file into a buffer
-    if(1 != fread(fileMotoHex.motorolaHexFileASCII, hexFileSizeASCII, 1, fp))
-        fclose(fp), free(fileMotoHex.motorolaHexFileASCII), fputs("Entire read fails", stderr), getchar(), exit(1);
+    if(1 != fread(fileMotorolaSREC.motorolaHexFileASCII, hexFileSizeASCII, 1, fp))
+        fclose(fp), free(fileMotorolaSREC.motorolaHexFileASCII), fputs("Entire read fails", stderr), getchar(), exit(1);
 
     // Copy the ASCII size and dump the whole file, should already be allocated.
-    fileMotoHex.fileSizeASCII = hexFileSizeASCII;
+    fileMotorolaSREC.fileSizeASCII = hexFileSizeASCII;
 
     // Close the file
     fclose(fp);

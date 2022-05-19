@@ -51,12 +51,23 @@ typedef struct
     uint32_t countSize;
 
     // Address params
-    uint16_t recordAddress;
+    uint32_t recordAddress;
     RECORD_TYPES recordType;
     uint32_t currentAddress;
-    uint8_t data[16];
+    uint8_t data[64];
     uint8_t checksum;
 }MotorolaSRecordField;
+
+typedef struct
+{
+    uint8_t HeaderHex[74];
+    char moduleName[20];
+    char versionNumber[2];
+    char revisionNumber[2];
+    char description[50];
+    uint8_t descriptionSize;
+    uint8_t headerSize;
+}MotorolaSRecordHeader;
 
 /// @struct A file struct after parsing
 typedef struct
@@ -73,7 +84,7 @@ typedef struct
 typedef struct
 {
     char* fileName;
-    char* header;
+    MotorolaSRecordHeader header;
     MotorolaSRecordField currentRecord;
     long fileSizeASCII;
     long fileSizeHex;
@@ -95,7 +106,7 @@ typedef struct
 }CrcAppendFileAttributes;
 
 CurrentFileAttributes fileIntelHex;
-CurrentMotoAttributes fileMotoHex;
+CurrentMotoAttributes fileMotorolaSREC;
 
 /// @brief This function dumps an intel hex file into allocated memory.
 /// @return A bool indicating success
