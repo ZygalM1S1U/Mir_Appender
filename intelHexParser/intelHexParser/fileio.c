@@ -186,7 +186,7 @@ bool copyFileAndAppendFrame(char* sourceFileName, CrcAppendFileAttributes* crcFi
         }
     }
 
-    printf("File copied successfully.\n");
+    printf("Modified file %s from %s copied to %s at location %s successfully.\n", mir.fileName, mir.fileLocation, mir.outputFileName, mir.outputLocation);
 
     fclose(source);
     fclose(target);

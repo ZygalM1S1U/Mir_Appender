@@ -54,7 +54,7 @@ typedef struct
     uint32_t recordAddress;
     RECORD_TYPES recordType;
     uint32_t currentAddress;
-    uint8_t data[64];
+    uint8_t data[0xFF];
     uint8_t checksum;
 }MotorolaSRecordField;
 

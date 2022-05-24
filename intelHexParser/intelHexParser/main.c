@@ -370,10 +370,18 @@ void crcTestFunc(void)
     printf("Implement your own test in here.\n");
 
     printf("Execution Time Tester\n");
+    float avg = 0.0f;
+    float sum = 0.0f;
+    long count = 0;
     for(int i = 0; i < 15; ++i)
     {
         parserSelector(mir.fullFileInputPath);
+        ++count;
+        sum += mir.lastKnownExecutionTime;
+        avg = sum/count;
     }
+
+    printf("The Average Execution time of file %s was %f ms\n", mir.fileName, avg);
 }
 
 void parserSelector(char* inputFilePath)
