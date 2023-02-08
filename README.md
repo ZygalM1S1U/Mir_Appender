@@ -143,7 +143,13 @@ FileLoc:;
 
 8th record - The output file location directory
 
-9th record - "01" Use version, "00" Don't Use Version.  By default this is set to "00"  This is to account for a "version" field placed in the record which is up to 4-bytes long BEFORE the length/CRC area.
+9th record - This is to account for a "version" field placed in the record which is up to 4-bytes long BEFORE the length/CRC area.
+
+Example 
+```
+00    VERSION_FIELD_DOES_NOT_EXIST,
+01    VERSION_FIELD_EXISTS,
+```
 
 ## Adding My Own Checksum Function
 To add your own function follow these steps:
