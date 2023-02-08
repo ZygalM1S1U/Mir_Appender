@@ -115,12 +115,12 @@ OpLoc:;
 ```
 3rd record - The Enum number for the byte order, currently, here they are from config.h
 ```
-01    MIR_LITTLE_ENDIAN,
-02    MIR_BIG_ENDIAN,
-03    MIR_MIDDLE_ENDIAN,
-04    MIR_PDP_ENDIAN,
-05    MIR_HONEYWELL316_ENDIAN,
-06    MIR_BYTE_SWAPPED,
+00    MIR_LITTLE_ENDIAN,
+01    MIR_BIG_ENDIAN,
+02    MIR_MIDDLE_ENDIAN,
+03    MIR_PDP_ENDIAN,
+04    MIR_HONEYWELL316_ENDIAN,
+05    MIR_BYTE_SWAPPED,
 ```
 4th record - The address to append the calculated CRC to.  Should be defined by the user based on memory map.
 Example
@@ -142,6 +142,8 @@ FileLoc:;
 7th record - The name of the output and CRC & Length appended file modified from the original file.
 
 8th record - The output file location directory
+
+9th record - "01" Use version, "00" Don't Use Version.  By default this is set to "00"  This is to account for a "version" field placed in the record which is up to 4-bytes long BEFORE the length/CRC area.
 
 ## Adding My Own Checksum Function
 To add your own function follow these steps:
