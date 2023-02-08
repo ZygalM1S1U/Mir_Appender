@@ -166,7 +166,7 @@ void writeFrame(CrcAppendFileAttributes* crcFileInfo, FILE* filePointer)
 
     // Compute the checksum and convert to ascii
     // Length will always be 8
-    uint8_t checksumBuffer[12];
+    uint8_t checksumBuffer[14];
     uint8_t lengthHex[8];
     uint8_t crcHex[2];
     convASCIItoHex(crcFileInfo->crcToAppend, crcHex, 4);
@@ -174,10 +174,10 @@ void writeFrame(CrcAppendFileAttributes* crcFileInfo, FILE* filePointer)
 
     // Set all members of the buffer to 0, so that we only use instructions
     // for the things to be filled.
-    memset(checksumBuffer, 0u, 12);
+    memset(checksumBuffer, 0u, 14);
 
     // Appending the length
-    checksumBuffer[0] = 0x08;
+    checksumBuffer[0] = crcFileInfo->recordSize;
 
     // Pull the address from the bottom 16 bits
     uint16_t address = (mir.appendageAddressFile & 0x0000FFFF);
@@ -196,8 +196,17 @@ void writeFrame(CrcAppendFileAttributes* crcFileInfo, FILE* filePointer)
     checksumBuffer[7] = crcHex[0];
     checksumBuffer[8] = crcHex[1];
 
+    // Version Packing
+    if(mir.useVersion)
+    {
+        checksumBuffer[9] = crcFileInfo->record[0];
+        checksumBuffer[10] = crcFileInfo->record[1];
+        checksumBuffer[11] = crcFileInfo->record[2];
+        checksumBuffer[12] = crcFileInfo->record[3];
+    }
+
 #if DEBUG_ACTIVE
-    for(int i = 0; i < 12; ++i)
+    for(int i = 0; i < 14; ++i)
         printf("0x%02X\n", checksumBuffer[i]);
 
     printNewLine();

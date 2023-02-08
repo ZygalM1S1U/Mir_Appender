@@ -290,6 +290,22 @@ void analyzeRecord(uint8_t* recordBuffer, uint8_t recordSize)
         // Increment the size
         fileIntelHex.fileSizeHex += fileIntelHex.currentRecord.recordSize;
     }
+    else if(fileIntelHex.currentRecord.currentAddress == mir.appendageAddressFile)
+    {
+        // Copy the size over
+        crcFileInformation.recordSize = fileIntelHex.currentRecord.recordSize;
+
+        // Copy the record for checksum calculations
+        memcpy(&crcFileInformation.record[0], dataBuffer, crcFileInformation.recordSize);
+#if DEBUG_ACTIVE
+    printf("CRC File Record:");
+    for(int i= 0; i <  crcFileInformation.recordSize; ++i)
+        printf("0x%02X ", crcFileInformation.record[i]);
+    printNewLine();
+    printf("Append Record Size: 0x%02X", crcFileInformation.recordSize);
+#endif
+
+    }
 
 #if DEBUG_ACTIVE
     printNewLine();

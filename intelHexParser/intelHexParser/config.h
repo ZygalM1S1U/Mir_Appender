@@ -24,6 +24,8 @@ typedef enum MIR_CONFIG_FILE_RECORD_TYPES_t
     MIR_RECORD_FILE_NAME,
     MIR_RECORD_FILE_OUTPUT_NAME,
     MIR_RECORD_FILE_OUTPUT_LOCATION,
+    MIR_RECORD_USE_VERSION,
+    MIR_RECORD_VERSION_SIZE,
     NUM_OF_MIR_RECORD_TYPES
 }MIR_CONFIG_FILE_RECORD_TYPES;
 
@@ -87,6 +89,8 @@ typedef struct
     uint8_t sizeOfInputPath;
     char fullFileOutputPath[MAX_STR_LEN];
     uint8_t sizeOfOutputPath;
+    uint8_t useVersion;
+    uint8_t versionSize;
     uint8_t sizes[NUM_OF_MIR_RECORD_TYPES];
 }mirConfiguratonSettings;
 

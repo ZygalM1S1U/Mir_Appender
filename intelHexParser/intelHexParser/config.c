@@ -26,6 +26,8 @@ static struct asciiConfigSettings_t
     char fileName[MAX_STR_LEN];       /// @note this must be changed if the string is longer than 24
     char outputLocation[MAX_STR_LEN];
     char outputFileName[MAX_STR_LEN];
+    char useVersion[2];
+    char versionLength[2];
     uint8_t sizes[NUM_OF_MIR_RECORD_TYPES];
 }asciiConfigSettings;
 
@@ -240,6 +242,17 @@ bool retrieveConfigurationSettings(void)
     printNewLine();
 #endif
 
+    // Assign the versioning info
+    uint8_t useVersion[1] = "";
+    convASCIItoHex((uint8_t*)asciiConfigSettings.useVersion, useVersion, 2);
+    mir.useVersion = useVersion[0];
+
+#if DEBUG_ACTIVE
+    printf("Use Version: ");
+    printf("0x%02X ", useVersion[0]);
+    printNewLine();
+#endif
+
     return retVal;
 }
 
@@ -309,6 +322,12 @@ void decipherInfo(uint8_t* info, uint8_t lineCount)
         break;
     case MIR_RECORD_FILE_OUTPUT_LOCATION:
         getRecordInformation(info, (uint8_t*)asciiConfigSettings.outputLocation, lineCount);
+        break;
+    case MIR_RECORD_USE_VERSION:
+        getRecordInformation(info, (uint8_t*)asciiConfigSettings.useVersion, lineCount);
+        break;
+    case MIR_RECORD_VERSION_SIZE:
+        getRecordInformation(info, (uint8_t*)asciiConfigSettings.versionLength, lineCount);
         break;
     default:
         break;

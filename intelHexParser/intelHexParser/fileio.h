@@ -47,6 +47,8 @@ typedef struct
     char    crcToAppend[4];
     char    lengthToAppend[8];
     char    checksum[2];
+    char    record[32];
+    uint8_t recordSize;
 }CrcAppendFileAttributes;
 
 CurrentFileAttributes fileIntelHex;
